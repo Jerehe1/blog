@@ -1,0 +1,36 @@
+{
+  "name": "blog-backend",
+  "version": "1.0.0",
+  "description": "A simple blog application backend with Express and MongoDB",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development node --watch index.js",
+    "test": "cross-env NODE_ENV=test node --test",
+    "lint": "eslint .",
+    "test_all": "cross-env NODE_ENV=test node --test tests/dummy.test.js tests/blog_api.test.js"
+  },
+  "keywords": [
+    "express",
+    "mongodb",
+    "blog",
+    "api",
+    "backend"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.20.0",
+    "mongoose": "^7.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "supertest": "^7.1.4"
+  }
+}
