@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { config } from 'dotenv'
 const baseUrl = '/api/blogs'
 
 let token = null
