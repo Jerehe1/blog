@@ -39,7 +39,11 @@ describe('when there is initially one user in db', () => {
                 .expect('Content-Type', /application\/json/);
             
             const usersAtEnd = await helper.usersInDb();
-            assert(result.body.error.includes('`username` to be unique')); // Fixed: Assert -> assert
+            assert(
+  result.body.error.toLowerCase().includes('unique') ||
+  result.body.error.toLowerCase().includes('duplicate'),
+  `Expected error message about username uniqueness, got: ${result.body.error}`
+); 
 
             assert.strictEqual(usersAtEnd.length, usersAtStart.length);
         });

@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken');
 const user = require('../models/users');
+const logger = require('./logger');
 
 const tokenExtractor = (request, response, next) => {
     const authorization = request.get('authorization');
-    if(authrization && authorization.toLowerCase().startsWith('bearer ')) {
+    if(authorization && authorization.toLowerCase().startsWith('bearer ')) {
         request.token = authorization.replace('Bearer ', '');
     } else {
         request.token = null;
@@ -27,7 +28,30 @@ const userExtractor = async (request, response, next) => {
     next();
 }
 
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' });
+}
+
+const errorHandler = (error, request, response, next) => {
+    logger.error(error.message);
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' });
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message });
+    } else if (error.name === 'JsonWebTokenError') {
+        return response.status(401).json({ error: 'invalid token' });
+    } else if (error.name === 'MongoServerError' && error.code === 11000) {
+        return response.status(400).json({ error: 'username must be unique' });
+    }
+    
+    response.status(500).json({ error: 'error '});
+    next(error);
+}
+
 module.exports = {
     tokenExtractor,
-    userExtractor
+    userExtractor,
+    unknownEndpoint,
+    errorHandler
 }

@@ -6,6 +6,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development node --watch index.js",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:frontend\"",
     "test": "cross-env NODE_ENV=test node --test",
     "lint": "eslint .",
     "test_all": "cross-env NODE_ENV=test node --test tests/dummy.test.js tests/blog_api.test.js"
@@ -30,6 +32,7 @@
     "mongoose": "^7.5.0"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "nodemon": "^3.0.1",
     "supertest": "^7.1.4"
   }
