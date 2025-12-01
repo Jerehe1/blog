@@ -177,6 +177,27 @@ body {
     border: 1px solid #2a2a3e;
 }
 
+.MainBlog-Toggle {
+    background: #38c18f;
+    color: #000000;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: inherit;
+    font-size: 0.85em;
+    width: auto;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(58, 109, 90, 0.3);
+    margin-left: 10px;
+}
+
+.MainBlog-Toggle:hover {
+    background: #45d9a0;
+    box-shadow: 0 3px 12px rgba(58, 109, 90, 0.4);
+}
+
 .blog-header {
     text-align: center;
     margin: 0 auto 20px;
@@ -212,42 +233,68 @@ body {
     border-radius: 15px;
     border-left: 4px solid #5a8a7a;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
     border: 1px solid #2a2a3e;
 }
 
-.blog-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(90, 138, 122, 0.3);
-    border-left-color: #6a9a8a;
-    background: #1f1f33;
+.blog-item h2 {
+    color: #8ab8a8;
+    font-size: 1.8em;
+    margin: 0 0 15px 0;
+    font-weight: 700;
+}
+
+.blog-item h3 {
+    color: #8888a0;
+    font-size: 1.2em;
+    margin: 12px 0;
+    font-weight: 600;
+    font-style: italic;
+}
+
+.blog-item h4 {
+    color: #7888b8;
+    font-size: 1em;
+    margin: 10px 0;
+    font-weight: 500;
 }
 
 .blog-item p {
     margin: 10px 0;
     line-height: 1.6;
+    color: #b8b8c0;
 }
 
-.blog-item p:first-child {
-    font-weight: 700;
-    font-size: 1.5em;
-    color: #8ab8a8;
-    margin-bottom: 12px;
-}
-
-.blog-item p:nth-child(2) {
-    color: #8888a0;
-    font-style: italic;
-}
-
-.blog-item p:nth-child(3) {
-    color: #7888b8;
-    text-decoration: none;
-}
-
-.blog-item p:last-child {
+.blog-item .blog-likes {
     color: #b8a870;
     font-weight: 600;
+}
+
+.blog-item .blog-user {
+    color: #8ab8a8;
+    font-weight: 500;
+}
+
+.Like-button {
+    background: #b8a870;
+    color: #0f0f1e;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: inherit;
+    font-size: 0.8em;
+    display: inline-block;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(184, 168, 112, 0.3);
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.Like-button:hover {
+    background: #c9b880;
+    box-shadow: 0 3px 12px rgba(184, 168, 112, 0.4);
+    transform: translateY(-1px);
 }
 
 /* New Blog Form Styles - Dark Glassmorphism */
@@ -345,25 +392,69 @@ body {
 }
 
 .toggle-form-button {
-    background: #4a4a6a;
-    color: #d8d8e0;
+    background: #d9534f;
+    color: #ffffff;
     border: none;
-    padding: 14px 28px;
-    border-radius: 12px;
+    padding: 12px 24px;
+    border-radius: 10px;
     cursor: pointer;
-    font-weight: 700;
+    font-weight: 600;
     font-family: inherit;
-    font-size: 1.05em;
+    font-size: 1em;
     display: block;
-    margin: 25px auto;
+    margin: 20px auto;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(74, 74, 106, 0.3);
+    box-shadow: 0 4px 15px rgba(217, 83, 79, 0.3);
 }
 
 .toggle-form-button:hover {
-    background: #5a5a7a;
+    background: #c9302c;
+    box-shadow: 0 6px 20px rgba(217, 83, 79, 0.4);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(74, 74, 106, 0.4);
+}
+
+.delete-blog-button {
+    background: #d9534f;
+    color: #ffffff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: inherit;
+    font-size: 0.85em;
+    display: inline-block;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(217, 83, 79, 0.3);
+}
+
+.delete-blog-button:hover {
+    background: #c9302c;
+    box-shadow: 0 3px 12px rgba(217, 83, 79, 0.4);
+    transform: translateY(-1px);
+}
+
+.new-blog-button {
+    background: #38c18f;
+    color: #000000;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: inherit;
+    font-size: 1em;
+    display: block;
+    margin: 20px auto;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(58, 109, 90, 0.3);
+}
+
+.new-blog-button:hover {
+    background: #45d9a0;
+    box-shadow: 0 6px 20px rgba(58, 109, 90, 0.4);
+    transform: translateY(-2px);
 }
 
 .logout-button {

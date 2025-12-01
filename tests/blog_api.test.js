@@ -30,6 +30,11 @@ beforeEach(async () => {
     .post('/api/login')
     .send({ username: 'testuser', password: 'sekret' })
 
+  if (loginResponse.status !== 200) {
+    console.error('Login failed:', loginResponse.status, loginResponse.body)
+    throw new Error('Login failed in beforeEach')
+  }
+
   token = loginResponse.body.token
 
  

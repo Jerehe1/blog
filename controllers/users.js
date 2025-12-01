@@ -4,30 +4,40 @@ const User = require('../models/users');
 
 
 usersRouter.post('/', async (request, response) => {
-    const { username, name, password } = request.body;
+    try {
+        const { username, name, password } = request.body;
 
-    if(!username || !name || !password) {
-        return response.status(400).json({
-            error: 'username, name, and password are required'
+        if(!username || !name || !password) {
+            return response.status(400).json({
+                error: 'username, name, and password are required'
+            });
+        }
+
+        if(username.length < 3 || password.length < 3) {
+            return response.status(400).json({
+                error: 'username and password must be at least 3 characters long'
+            });
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        const user = new User({
+            username,
+            name,
+            passwordHash
         });
+
+        const savedUser = await user.save(); 
+        response.status(201).json(savedUser);
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            return response.status(400).json({ error: error.message });
+        }
+        if (error.code === 11000) {
+            return response.status(400).json({ error: 'username must be unique' });
+        }
+        response.status(500).json({ error: 'Internal server error' });
     }
-
-    if(username.length < 3 || password.length < 3) {
-        return response.status(400).json({
-            error: 'username and password must be at least 3 characters long'
-        });
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    const user = new User({
-        username,
-        name,
-        passwordHash
-    });
-
-    const savedUser = await user.save(); 
-    response.status(201).json(savedUser);
 });
 
 usersRouter.get('/', async (request, response) => {

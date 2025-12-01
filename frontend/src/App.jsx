@@ -3,8 +3,10 @@ import Blog from './components/Blog'
 import BlogForm from './components/blogform'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import "./index.css"
+import likeBlog from './components/Like'
+import './index.css'
 import Toggle from './components/toggle'
+import DeleteBlog from './components/delete.jsx'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -17,17 +19,19 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
-    )  
+    )
   }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
-      if (loggedUserJSON) {
-        const user = JSON.parse(loggedUserJSON)
-        setUser(user)
-        blogService.setToken(user.token)
-      }
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
   }, [])
+
+// Login function
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -40,11 +44,26 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      setErrorMessage('Login failed')
+    } catch (error) {
+      if (error.response) {
+        
+        if (error.response.status === 401) {
+          setErrorMessage('Invalid username or password')
+        } else if (error.response.status === 400) {
+          setErrorMessage('Username and password are required')
+        } else {
+          setErrorMessage('Login failed. Please try again later')
+        }
+      } else if (error.request) {
+        
+        setErrorMessage('Cannot connect to server. Please check your connection')
+      } else {
+       
+        setErrorMessage('An unexpected error occurred')
+      }
       setTimeout(() => {
         setErrorMessage(null)
-      }, 3000)
+      }, 5000)
     }
   }
 
@@ -52,6 +71,37 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
     blogService.setToken(null)
+  }
+
+  // Blog message box functions
+
+  const handleLike = async (blog) => {
+    try {
+      const updatedBlog = await likeBlog(blog)
+      setBlogs(blogs.map(b => b.id !== blog.id ? b : updatedBlog))
+    } catch (error) {
+      if (error.response?.status === 401) {
+        setErrorMessage('Session expired. Please log in again')
+        handleLogout()
+      } else {
+        setErrorMessage('Failed to update likes')
+      }
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 3000)
+    }
+  }
+
+  const handleDelete = async (blog) => {
+    try {
+      await DeleteBlog(blog)
+      setBlogs(blogs.filter(b => b.id !== blog.id))
+    } catch {
+      setErrorMessage('Failed to delete blog')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 3000)
+    }
   }
 
   const addBlog = async (blogObject) => {
@@ -63,8 +113,15 @@ const App = () => {
       setTimeout(() => {
         setSuccessMessage(null)
       }, 3000)
-    } catch (exception) {
-      setErrorMessage('Creating blog failed')
+    } catch (error) {
+      if (error.response?.status === 401) {
+        setErrorMessage('Session expired. Please log in again')
+        handleLogout()
+      } else if (error.response?.status === 400) {
+        setErrorMessage(error.response.data.error || 'Invalid blog data')
+      } else {
+        setErrorMessage('Creating blog failed')
+      }
       setTimeout(() => {
         setErrorMessage(null)
       }, 3000)
@@ -124,8 +181,8 @@ const App = () => {
             <div className='blog-header'>
               <h2>Welcome! {user.name} </h2>
             </div>
-            <p className='user-info'>You have {blogs.length} blogs </p>
-            <p className='user-info'> You have a total of {blogs.reduce((sum, blog) => sum + blog.likes, 0)} likes</p>
+            <p className='user-info'>There are a  {blogs.length} blogs </p>
+            <p className='user-info'> There is a total of {blogs.reduce((sum, blog) => sum + blog.likes, 0)} likes</p>
           </div>
 
           {successMessage && (
@@ -138,19 +195,19 @@ const App = () => {
               {errorMessage}
             </div>
           )}
-        
+
           <div className='blogs-container'>
-            {blogs.map(blog =>
-              <div key={blog.id} className='blog-item'>
-                <Blog blog={blog} />
-              </div>
+            {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+              <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} />
             )}
 
-            <Toggle buttonLabel="New Blog" buttonClass="toggle-form-button">
-              <BlogForm createBlog={addBlog} />
+            <Toggle buttonLabel="New Blog" buttonClass="new-blog-button">
+              {(closeForm) => (
+                <BlogForm createBlog={addBlog} onClose={closeForm} />
+              )}
             </Toggle>
           </div>
-        
+
           <button className='logout-button' onClick={handleLogout}>
             logout
           </button>
@@ -161,3 +218,8 @@ const App = () => {
 }
 
 export default App
+
+if (process.env.NODE_ENV === 'test') {
+    const testingRouter = require('./controllers/testing')
+    app.use('/api/testing', testingRouter)
+}
